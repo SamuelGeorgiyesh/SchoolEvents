@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Campus Event Finder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Graduate&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <h1 class="title">Campus Event Finder</h1>
+    <p class="lede">Talks, concerts, games, and free food happening across campus this term. Search by keyword, narrow by category or month, save what catches your eye, and post events of your own.</p>
+    <p class="tally" id="tally"></p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="controls" aria-label="Find events">
+    <div class="filters-top">
+      <div class="field field-search">
+        <label for="search">Search</label>
+        <div class="search-box">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+          <input id="search" type="search" placeholder="Try “yoga” or “library”" autocomplete="off" spellcheck="false">
+          <kbd class="kbd" aria-hidden="true" title="Press / to jump to search">/</kbd>
+        </div>
+      </div>
+      <div class="field">
+        <label for="month">Month</label>
+        <div class="select-wrap"><select id="month"></select></div>
+      </div>
+      <div class="field">
+        <label for="sort">Sort by</label>
+        <div class="select-wrap">
+          <select id="sort">
+            <option value="date-asc">Soonest first</option>
+            <option value="date-desc">Latest first</option>
+            <option value="name">Name (A–Z)</option>
+            <option value="popular">Most people going</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <span class="label" id="categoryLabel">Category</span>
+      <div class="chips" id="chips" role="group" aria-labelledby="categoryLabel"></div>
+    </div>
+
+    <div class="filters-bottom">
+      <label class="check"><input type="checkbox" id="savedOnly"><span>Show saved events only</span></label>
+      <button type="button" class="link-btn" id="reset">Clear filters</button>
+      <div class="push">
+        <div class="seg" role="group" aria-label="Layout">
+          <button type="button" data-view="grid" aria-pressed="true">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg>
+            <span>Grid</span>
+          </button>
+          <button type="button" data-view="list" aria-pressed="false">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+            <span>List</span>
+          </button>
+        </div>
+        <button type="button" class="btn btn-primary" id="openForm" aria-expanded="false" aria-controls="formPanel">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>
+          <span id="openFormLabel">Add an event</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section id="formPanel" class="form-panel" aria-labelledby="formTitle" hidden>
+    <h2 id="formTitle">Post an event</h2>
+    <p class="form-intro">Your event shows up in the list as soon as you post it.</p>
+    <form id="eventForm" novalidate>
+      <div class="form-grid">
+        <div class="field f-name">
+          <label for="ev-name">Event name</label>
+          <input id="ev-name" type="text" maxlength="80" autocomplete="off" aria-describedby="ev-name-error" required>
+          <p class="error" id="ev-name-error"></p>
+        </div>
+        <div class="field f-cat">
+          <label for="ev-category">Category</label>
+          <div class="select-wrap">
+            <select id="ev-category" aria-describedby="ev-category-error" required>
+              <option value="">Choose one</option>
+            </select>
+          </div>
+          <p class="error" id="ev-category-error"></p>
+        </div>
+        <div class="field f-date">
+          <label for="ev-date">Date</label>
+          <input id="ev-date" type="date" aria-describedby="ev-date-error" required>
+          <p class="error" id="ev-date-error"></p>
+        </div>
+        <div class="field f-time">
+          <label for="ev-time">Time <span class="opt">(optional)</span></label>
+          <input id="ev-time" type="time">
+        </div>
+        <div class="field f-loc">
+          <label for="ev-location">Location</label>
+          <input id="ev-location" type="text" maxlength="80" autocomplete="off" aria-describedby="ev-location-error" required>
+          <p class="error" id="ev-location-error"></p>
+        </div>
+        <div class="field f-desc">
+          <label for="ev-description">Short description</label>
+          <textarea id="ev-description" maxlength="160" aria-describedby="ev-description-error desc-count" required></textarea>
+          <p class="error" id="ev-description-error"></p>
+          <p class="hint" id="desc-count">0 of 160 characters</p>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Post event</button>
+        <button type="button" class="btn btn-quiet" id="cancelForm">Cancel</button>
+      </div>
+    </form>
+  </section>
+
+  <div class="results">
+    <p id="summary" tabindex="-1" aria-live="polite"></p>
+  </div>
+
+  <div id="events" class="events"></div>
+
+  <div id="empty" class="empty" hidden>
+    <h2 id="emptyTitle"></h2>
+    <p id="emptyText"></p>
+    <button type="button" class="btn btn-quiet" id="emptyBtn"></button>
+  </div>
+
+  <p class="footnote">Saved events, RSVPs, and events you post are remembered in this browser only.</p>
+</main>
+
+<div class="toast" id="toast" role="status">
+  <span id="toastText"></span>
+  <button type="button" id="toastBtn" hidden></button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
